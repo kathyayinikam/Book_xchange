@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard with Navbar</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('d.jpg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.62);
+      z-index: -1;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 15px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar h2 {
+      margin: 0;
+      color: #009ca1;
+    }
+
+    .navbar-buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar button {
+      background-color: transparent;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .navbar button:hover {
+      background-color: #e0f7fa;
+    }
+
+    .main-container {
+      padding: 30px;
+    }
+
+    .main-container h1 {
+      margin-bottom: 20px;
+      color: #05393b;
+    }
+
+    #bookList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .book img {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .book img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      color: #111827;
+    }
+
+    .modal-content p {
+      margin: 5px 0;
+      color: #4b5563;
+    }
+
+    .modal-content button {
+      margin-top: 10px;
+      margin-right: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .buy-btn { background-color: #3b82f6; color: white; }
+    .buy-btn:hover { background-color: #2563eb; }
+
+    .delete-btn { background-color: #ef4444; color: white; }
+    .update-btn { background-color: #facc15; color: black; }
+
+    .purchased-btn { background-color: #9ca3af; color: white; cursor: not-allowed; }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 20px;
+      color: #021930;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <h2>Book Store</h2>
+    <div class="navbar-buttons">
+      <button id="userdash">My Dashboard</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <h1>Your Books</h1>
+    <div id="bookList"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <img id="modalImage" src="" alt="Book" style="width:230px;height:350px; border-radius:10px; margin-bottom:15px;">
+      <h3 id="modalName"></h3>
+      <p id="modalAuthor"></p>
+      <p id="modalPrice"></p>
+      <div id="modalButtons"></div>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert("User not logged in!");
+      window.location.href = "index.html";
+    }
+
+    async function fetchBooks() {
+      const res = await fetch(`http://localhost:3000/book/user/${userId}/dashboard`);
+      const data = await res.json();
+
+      const allBooks = [...data.uploadedBooks];
+      data.purchasedBooks.forEach(p => {
+        if (!allBooks.some(b => b._id === p._id)) allBooks.push(p);
+      });
+
+      const bookList = document.getElementById('bookList');
+      bookList.innerHTML = '';
+
+      allBooks.forEach(book => {
+        const bookDiv = document.createElement('div');
+        bookDiv.classList.add('book');
+        bookDiv.innerHTML = `<img src="${book.imageUrl}" alt="${book.name}" onclick='openModal(${JSON.stringify(book)})'>`;
+        bookList.appendChild(bookDiv);
+      });
+    }
+
+    function openModal(book) {
+      document.getElementById('modalImage').src = book.imageUrl;
+      document.getElementById('modalName').innerText = book.name;
+      document.getElementById('modalAuthor').innerText = "Author: " + book.author;
+      document.getElementById('modalPrice').innerText = "Price: ₹" + book.cost;
+
+      const modalButtons = document.getElementById('modalButtons');
+      modalButtons.innerHTML = '';
+
+      if (book.isPurchased) {
+        const purchasedBtn = document.createElement('button');
+        purchasedBtn.className = 'purchased-btn';
+        purchasedBtn.innerText = 'Purchased';
+        purchasedBtn.disabled = true;
+        modalButtons.appendChild(purchasedBtn);
+      } else {
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'buy-btn';
+        buyBtn.innerText = 'Buy';
+        buyBtn.onclick = () => buyBook(book._id);
+        modalButtons.appendChild(buyBtn);
+      }
+
+      if (book.isOwner) {
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete-btn';
+        delBtn.innerText = 'Delete';
+        delBtn.onclick = () => deleteBook(book.name);
+        modalButtons.appendChild(delBtn);
+      }
+
+      document.getElementById('bookModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('bookModal').style.display = 'none';
+    }
+
+    async function deleteBook(bookName) {
+      const confirmDelete = confirm(`Are you sure you want to delete "${bookName}"?`);
+      if (!confirmDelete) return;
+
+      const response = await fetch(`http://localhost:3000/book/name/${encodeURIComponent(bookName)}`, { method: 'DELETE' });
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+        closeModal();
+        fetchBooks();
+      } else {
+        alert("Error deleting book");
+      }
+    }
+
+    async function buyBook(bookId) {
+      const response = await fetch(`http://localhost:3000/book/buy/${bookId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Book purchased!');
+        closeModal();
+        fetchBooks();
+      } else {
+        alert("Error purchasing book");
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('userId');
+      window.location.href = "index.html";
+    });
+
+    document.getElementById('userdash').addEventListener('click', () => {
+      window.location.href = "userdashboard.html";
+    });
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('bookModal');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    fetchBooks();
+  </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans&display=swap"
+  rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  body {
+    background: url('d.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+  }
+
+
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 156, 161, 0.1);
+    border-bottom: 2px solid #e0f1f2;
+    position: relative;
+    z-index: 2;
+  }
+
+  .logo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #009ca1;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+  }
+
+  /* Buttons */
+   button {
+    margin-left: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 156, 161, 0.2);
+  }
+
+  #login {
+    background-color: white;
+    border: 2px solid #009ca1;
+    color: #009ca1;
+  }
+
+  #login:hover {
+    background-color: #009ca1;
+    color: white;
+  }
+
+  #signup {
+    background-color: #009ca1;
+    color: white;
+    border: 2px solid transparent;
+  }
+
+  #signupNav:hover {
+    background-color: #007c81;
+  }
+
+  /* Hero Section */
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 60px;
+    margin-top: 20px;
+  }
+  .hero::before {
+content: '';
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 132%;
+background: rgba(255, 255, 255, 0.344); /* adjust transparency */
+z-index: 0;
+}
+
+.hero-text, .hero-image {
+position: relative;
+z-index: 1;
+}
+
+  .hero-text {
+    max-width: 50%;
+    animation: fadeInLeft 1s ease;
+    justify-content: center;
+  }
+
+  .hero-text h1 {
+    font-size: 58px;
+    line-height: 1.2;
+    color: #333;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 25px;
+  }
+
+  .hero-text p {
+    font-size: 20px;
+    color: #666;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .emphasized-line {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 60px;
+    color: #009ca1;
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    width: 100%;
+  }
+
+
+  /* Hero Image */
+  .hero-image {
+    max-width: 40%;
+    animation: fadeInRight 1s ease;
+  }
+
+  .hero-image img {
+    width: 100%;
+    border-radius: 25px;
+
+  }
+
+  /* Animations */
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo">Book Exchange</div>
+    <div class="nav-buttons">
+      <button id="loginNav">Login</button>
+      <button id="signupNav">Sign Up</button>
+    </div>
+  </header>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>A Book can change<br><span class="emphasized-line">your Life</span></h1>
+      <p>Read • Listen • Learn • Repeat</p>
+    </div>
+    <div class="hero-image">
+      <img src="girl.png" alt="Girl reading a book">
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('signupNav').addEventListener('click', () => {
+      window.location.href = 'sign-up.html';
+    });
+
+    // Event listener for the Login button to redirect to the login page
+    document.getElementById('loginNav').addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
